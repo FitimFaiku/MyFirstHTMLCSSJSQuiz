@@ -65,3 +65,7 @@ button:hover{
   height: 200px;
   margin-top: 40px;
 }
+
+.quiz-configuration{
+	display: flex;
+}

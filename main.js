@@ -1,13 +1,24 @@
 function main(){
+	
+	// Global Variables 
+	let selectedCategory = "Linux";
+	let selectedLimit = 10;
+	let selectedDifficulty = "easy";
 	// Variables
 	const quizContainer = document.getElementById('quiz');
+	const quizConfigurationContainer = document.getElementById('quiz-configuration');
 	const resultsContainer = document.getElementById('results');
 	const submitButton = document.getElementById('submit');
+	const submitQuizConfiguration = document.getElementById('submit-configuration');
 
 	// Pagination
 	const previousButton = document.getElementById("previous");
 	const nextButton = document.getElementById("next");
 	
+	// Hide Buttons before Quiz starts
+	submitButton.style.visibility = 'hidden';
+    previousButton.style.visibility = 'hidden';
+    nextButton.style.visibility = 'hidden';
 
 	// keep track of user's answers
 	let numCorrect = 0;
@@ -15,6 +26,7 @@ function main(){
   
 	// Event listeners
 	submitButton.addEventListener('click', showResults);
+	submitQuizConfiguration.addEventListener('click', reactOnSubmitQuizConfiguration);
 	previousButton.addEventListener("click", showPreviousSlide);
 	nextButton.addEventListener("click", showNextSlide);
 	const myQuestions = [
@@ -48,16 +60,13 @@ function main(){
 	}
 	];
 
-	// Kick things off
-	buildQuiz();
 	
-	const slides = document.querySelectorAll(".slide");
+	let slides = null;
 	// gather answer containers from our quiz
-	const answerContainers = quizContainer.querySelectorAll('.answers');
+	let answerContainers = null;
 
-	// Show the first slide
-	showSlide(currentSlide);
 
+	
 	
   
   
@@ -66,11 +75,11 @@ function main(){
   // Implement basic functionality where users can answer questions upon page reloads (Fetch API, XMLHttpRequest)
   // Let the user request new questions without page reloads (3 pt)
   function buildQuiz(){
-	// 1. Create a new XMLHttpRequest object
+	// Create a new XMLHttpRequest object
 	let xhr = new XMLHttpRequest()
-
+	
 	// Configure it: GET-request for the URL /article/.../load
-	xhr.open('GET', ' https://quizapi.io/api/v1/questions');
+	xhr.open('GET', ' https://quizapi.io/api/v1/questions?category=' + selectedCategory + '&difficulty=' + selectedDifficulty + '&limit=' + selectedLimit);
 	
 	// Set Request Headers
 	xhr.setRequestHeader("X-Api-Key","2DJPTeJMUrX3taAcep7V2339niDaSMpxLIRm9hbn");
@@ -81,23 +90,26 @@ function main(){
 	// 4. This will be called after the response is received
 	xhr.onload = function() {
 	  if (xhr.status != 200) { // analyze HTTP status of the response
-		alert(`Error ${xhr.status}: ${xhr.statusText}`); // e.g. 404: Not Found
+		// alert(`Error ${xhr.status}: ${xhr.statusText}`); // e.g. 404: Not Found
 	  } else { // show the result
-		alert(`Done, got ${xhr.response.data} bytes`); // response is the server
+		console.log(xhr);
+		console.log(xhr.response);
+		console.log(xhr.response.data);
+		// alert(`Done, got ${xhr.response.data} bytes`); // response is the server
 	  }
 	};
 
 	xhr.onprogress = function(event) {
 	  if (event.lengthComputable) {
-		alert(`Received ${event.loaded} of ${event.total} bytes`);
+		// alert(`Received ${event.loaded} of ${event.total} bytes`);
 	  } else {
-		alert(`Received ${event.loaded} bytes`); // no Content-Length
+		// alert(`Received ${event.loaded} bytes`); // no Content-Length
 	  }
 
 	};
 
 	xhr.onerror = function() {
-	  alert("Request failed");
+	  // alert("Request failed");
 	};
 	  
     // variable to store the HTML output
@@ -106,6 +118,8 @@ function main(){
     // for each question...
     myQuestions.forEach(
       (currentQuestion, questionNumber) => {
+		  
+		  console.log("here!");
 
         // variable to store the list of possible answers
         const answers = [];
@@ -152,6 +166,7 @@ function main(){
       const answerContainer = answerContainers[questionNumber];
       const selector = `input[name=question${questionNumber}]:checked`;
       const userAnswer = (answerContainer.querySelector(selector) || {}).value;
+	  console.log("Useranswer", userAnswer);
 
       // if answer is correct
       if(userAnswer === currentQuestion.correctAnswer){
@@ -191,51 +206,49 @@ function main(){
       submitButton.style.display = 'none';
     }
   }
-  
-  function showResults(){
-
-  // gather answer containers from our quiz
-  const answerContainers = quizContainer.querySelectorAll('.answers');
-
-  // keep track of user's answers
-  let numCorrect = 0;
-
-  // for each question...
-  myQuestions.forEach( (currentQuestion, questionNumber) => {
-
-    // find selected answer
-    const answerContainer = answerContainers[questionNumber];
-    const selector = `input[name=question${questionNumber}]:checked`;
-    const userAnswer = (answerContainer.querySelector(selector) || {}).value;
-
-    // if answer is correct
-    if(userAnswer === currentQuestion.correctAnswer){
-      // add to the number of correct answers
-      numCorrect++;
-
-      // color the answers green
-      answerContainers[questionNumber].style.color = 'lightgreen';
-    }
-    // if answer is wrong or blank
-    else{
-      // color the answers red
-      answerContainers[questionNumber].style.color = 'red';
-    }
-  });
-
-  // show number of correct answers out of total
-  resultsContainer.innerHTML = `${numCorrect} out of ${myQuestions.length}`;
-}
 
   function showNextSlide() {
     showSlide(currentSlide + 1);
   }
 
   function showPreviousSlide() {
-	alert("Hello");
     showSlide(currentSlide - 1);
   }
-
+  
+  function reactOnSubmitQuizConfiguration() {
+	  
+    submitButton.style.visibility = 'visible';
+    previousButton.style.visibility = 'visible';
+    nextButton.style.visibility = 'visible';
+	
+	quizConfigurationContainer.style.display = 'none';
+	
+	// Category Input from User
+	var e = document.getElementById("quizCategory");
+	selectedCategory = e.options[e.selectedIndex].value;
+	
+	// Difficulty input from User
+	var ee = document.getElementById("difficultyLevel");
+	selectedDifficulty = ee.options[ee.selectedIndex].value;
+	
+	// Question Limit input from User
+	var eee = document.getElementById("questionLimit");
+	selectedLimit = eee.options[eee.selectedIndex].value;
+	// Kick things off
+	buildQuiz();
+	slides = document.querySelectorAll(".slide");
+	// gather answer containers from our quiz
+	answerContainers = quizContainer.querySelectorAll('.answers');
+	
+	// Show the first slide
+	showSlide(currentSlide);
+	
   }
+  
+  function saveResultIntoStorage() {
+    localStorage.setItem('resultInPercent', 20);
+  }
+
+}
   
 
