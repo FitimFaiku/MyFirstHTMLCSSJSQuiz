@@ -29,7 +29,8 @@ function main(){
 	submitQuizConfiguration.addEventListener('click', reactOnSubmitQuizConfiguration);
 	previousButton.addEventListener("click", showPreviousSlide);
 	nextButton.addEventListener("click", showNextSlide);
-	const myQuestions = [
+	let myQuestions = null;
+	const myQuestionsStatic = [
 	{
 	  question: "Who invented JavaScript?",
 	  answers: {
@@ -64,17 +65,13 @@ function main(){
 	let slides = null;
 	// gather answer containers from our quiz
 	let answerContainers = null;
-
-
-	
-	
-  
   
   // Functions
   // 2.0 Create a web application that lets user answer questions (requested from QuizAPI, 7 pts)
   // Implement basic functionality where users can answer questions upon page reloads (Fetch API, XMLHttpRequest)
   // Let the user request new questions without page reloads (3 pt)
   function buildQuiz(){
+	
 	// Create a new XMLHttpRequest object
 	let xhr = new XMLHttpRequest()
 	
@@ -92,40 +89,32 @@ function main(){
 	  if (xhr.status != 200) { // analyze HTTP status of the response
 		// alert(`Error ${xhr.status}: ${xhr.statusText}`); // e.g. 404: Not Found
 	  } else { // show the result
-		console.log(xhr);
-		console.log(xhr.response);
-		console.log(xhr.response.data);
-		// alert(`Done, got ${xhr.response.data} bytes`); // response is the server
-	  }
-	};
-
-	xhr.onprogress = function(event) {
-	  if (event.lengthComputable) {
-		// alert(`Received ${event.loaded} of ${event.total} bytes`);
-	  } else {
-		// alert(`Received ${event.loaded} bytes`); // no Content-Length
-	  }
-
-	};
-
-	xhr.onerror = function() {
-	  // alert("Request failed");
-	};
-	  
-    // variable to store the HTML output
-    const output = [];
-
-    // for each question...
+		
+		// console.log(xhr.response);
+		// console.log(xhr.response.data);
+		myQuestions = JSON.parse(xhr.responseText);
+		
+		// variable to store the HTML output
+		const output = [];
+		// for each question...
     myQuestions.forEach(
       (currentQuestion, questionNumber) => {
 		  
-		  console.log("here!");
-
-        // variable to store the list of possible answers
+		  // variable to store the list of possible answers
         const answers = [];
+		
+		  
+		  console.log("currentQuestion", currentQuestion);
+		  console.log("questionNumber", questionNumber);
+
+        
 
         // and for each available answer...
         for(letter in currentQuestion.answers){
+			if(currentQuestion.answers[letter] === null) {
+			  continue;
+			}
+			console.log("letter", letter);
 
           // ...add an HTML radio button
           answers.push(
@@ -144,16 +133,40 @@ function main(){
             <div class="answers"> ${answers.join("")} </div>
           </div>`
         );
+		quizContainer.innerHTML = output.join('');
       }
     );
+	// finally combine our output list into one string of HTML and put it on the page
+    
+	
+	slides = document.querySelectorAll(".slide");
+	// gather answer containers from our quiz
+	answerContainers = quizContainer.querySelectorAll('.answers');
+	// Show the first slide
+	showSlide(currentSlide);
+		
+	  }
+	};
 
-    // finally combine our output list into one string of HTML and put it on the page
-    quizContainer.innerHTML = output.join('');
+	xhr.onprogress = function(event) {
+	  if (event.lengthComputable) {
+		// alert(`Received ${event.loaded} of ${event.total} bytes`);
+	  } else {
+		// alert(`Received ${event.loaded} bytes`); // no Content-Length
+	  }
+
+	};
+
+	xhr.onerror = function() {
+	  // alert("Request failed");
+	};
+	  
   }
 
   function showResults(){
 
     // gather answer containers from our quiz
+	/** 
     const answerContainers = quizContainer.querySelectorAll('.answers');
 
     // keep track of user's answers
@@ -185,6 +198,7 @@ function main(){
 
     // show number of correct answers out of total
     resultsContainer.innerHTML = `${numCorrect} out of ${myQuestions.length}`;
+	*/
   }
 
   function showSlide(n) {
@@ -208,6 +222,7 @@ function main(){
   }
 
   function showNextSlide() {
+	  console.log("Click");
     showSlide(currentSlide + 1);
   }
 
@@ -236,17 +251,15 @@ function main(){
 	selectedLimit = eee.options[eee.selectedIndex].value;
 	// Kick things off
 	buildQuiz();
-	slides = document.querySelectorAll(".slide");
-	// gather answer containers from our quiz
-	answerContainers = quizContainer.querySelectorAll('.answers');
+
 	
-	// Show the first slide
-	showSlide(currentSlide);
+	
 	
   }
   
   function saveResultIntoStorage() {
     localStorage.setItem('resultInPercent', 20);
+	var resultInPercent = localStorage.getItem('resultInPercent');
   }
 
 }
