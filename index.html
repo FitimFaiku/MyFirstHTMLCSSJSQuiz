@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<!--Let the user save and display high-scores (5 pt, Storage API)-->
+<!--Let the user configure category, difficulty, tags, etc. for each question (4 pt)-->
+<html>
+	<head>
+		<script src="index.js"> </script>
+		<link rel="stylesheet" href="style.css">
+		<title></title>
+	</head>
+<body onload="main()">
+	<h1>Quiz on Important Tech Facts</h1>
+	<div id="quiz-configuration">
+		<!-- category : (Linux,DevOps,Networking,Programming (PHP, JS, Python and etc.)),Cloud,Docker, Kubernetes) -->
+		<h2>Please choose the category of the quiz</h2>
+		<select id="quizCategory">
+		  <option value="Linux">Linux</option>
+		  <option value="DevOps">DevOps</option>
+		  <option value="Networking">Networking</option>
+		  <option value="Programming">Programming</option>
+		  <option value="PHP">PHP</option>
+		  <option value="Cloud">Cloud</option>
+		  <option value="Docker">Docker</option>
+		  <option value="Kubernetes">Kubernetes</option>
+		</select>
+
+		<select id="difficultyLevel">
+		  <option value="Hard">Hard</option>
+		  <option value="Medium">Medium</option>
+		  <option value="Easy">Easy</option>
+		</select>
+		
+		<select id="questionLimit">
+		  <option value="10">10</option>
+		  <option value="20">20</option>
+		  <option value="30">30</option>
+		</select>
+		
+		<button id="submit-configuration">Submit Quiz Configuration and start Quiz</button>
+	  </div>
+	<div class="quiz-container">
+	  <div id="quiz"></div>
+	</div>
+	<div class="buttons-container">
+		<button id="previous">Previous Question</button>
+		<button id="next">Next Question</button>
+		<button id="submit">Submit Quiz</button>
+	</div>
+	<div id="results"></div>
+</body>
+</html>
