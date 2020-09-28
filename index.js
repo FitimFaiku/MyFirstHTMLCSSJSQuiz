@@ -180,7 +180,7 @@ function main(){
     // show number of correct answers out of total
     resultsContainer.innerHTML = `${numCorrect} out of ${myQuestions.length}`;
 	resultsContainer.style.visibility = 'visible';
-	const reslutsInPercent = (numCorrect * myQuestions.length) / 100 ;
+	const reslutsInPercent = (numCorrect / myQuestions.length) * 100) ;
 	console.log("reslutsInPercent",reslutsInPercent);
 	saveResultIntoStorage(reslutsInPercent);
 	updateResult();
