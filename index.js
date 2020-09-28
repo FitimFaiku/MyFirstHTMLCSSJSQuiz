@@ -8,17 +8,19 @@ function main(){
 	const quizContainer = document.getElementById('quiz');
 	const quizConfigurationContainer = document.getElementById('quiz-configuration');
 	const resultsContainer = document.getElementById('results');
-	const submitButton = document.getElementById('submit');
 	const submitQuizConfiguration = document.getElementById('submit-configuration');
 
-	// Pagination
+	// Buttons
+	const submitButton = document.getElementById('submit');
 	const previousButton = document.getElementById("previous");
 	const nextButton = document.getElementById("next");
+	const restartButton = document.getElementById("restart");
 	
 	// Hide Buttons before Quiz starts
 	submitButton.style.visibility = 'hidden';
     previousButton.style.visibility = 'hidden';
     nextButton.style.visibility = 'hidden';
+    restartButton.style.visibility = 'hidden';
 
 	// keep track of user's answers
 	let numCorrect = 0;
@@ -26,40 +28,11 @@ function main(){
   
 	// Event listeners
 	submitButton.addEventListener('click', showResults);
+	restartButton.addEventListener('click', restartQuiz);
 	submitQuizConfiguration.addEventListener('click', reactOnSubmitQuizConfiguration);
 	previousButton.addEventListener("click", showPreviousSlide);
 	nextButton.addEventListener("click", showNextSlide);
 	let myQuestions = null;
-	const myQuestionsStatic = [
-	{
-	  question: "Who invented JavaScript?",
-	  answers: {
-		a: "Douglas Crockford",
-		b: "Sheryl Sandberg",
-		c: "Brendan Eich"
-	  },
-	  correctAnswer: "c"
-	},
-	{
-	  question: "Which one of these is a JavaScript package manager?",
-	  answers: {
-		a: "Node.js",
-		b: "TypeScript",
-		c: "npm"
-	  },
-	  correctAnswer: "c"
-	},
-	{
-	  question: "Which tool can you use to ensure code quality?",
-	  answers: {
-		a: "Angular",
-		b: "jQuery",
-		c: "RequireJS",
-		d: "ESLint"
-	  },
-	  correctAnswer: "d"
-	}
-	];
 
 	
 	let slides = null;
@@ -71,6 +44,7 @@ function main(){
   // Implement basic functionality where users can answer questions upon page reloads (Fetch API, XMLHttpRequest)
   // Let the user request new questions without page reloads (3 pt)
   function buildQuiz(){
+	  quizContainer.style.visibility = 'visible';
 	
 	// Create a new XMLHttpRequest object
 	let xhr = new XMLHttpRequest()
@@ -164,25 +138,31 @@ function main(){
   }
 
   function showResults(){
+	  
+	  restartButton.style.visibility = 'visible';
 
     // gather answer containers from our quiz
-	/** 
+	
     const answerContainers = quizContainer.querySelectorAll('.answers');
 
     // keep track of user's answers
     let numCorrect = 0;
+	
+	console.log("answerContainers",answerContainers);
 
     // for each question...
     myQuestions.forEach( (currentQuestion, questionNumber) => {
-
+	  console.log("QuestionNumber:", questionNumber, "currentQuestion:", currentQuestion);
       // find selected answer
       const answerContainer = answerContainers[questionNumber];
       const selector = `input[name=question${questionNumber}]:checked`;
       const userAnswer = (answerContainer.querySelector(selector) || {}).value;
 	  console.log("Useranswer", userAnswer);
+	  
 
       // if answer is correct
-      if(userAnswer === currentQuestion.correctAnswer){
+	  console.log("currentQuestion.correct_answer:",currentQuestion.correct_answer, "userAnswer:",userAnswer);
+      if(currentQuestion.correct_answer === userAnswer){
         // add to the number of correct answers
         numCorrect++;
 
@@ -194,14 +174,21 @@ function main(){
         // color the answers red
         answerContainers[questionNumber].style.color = 'red';
       }
+	  
     });
 
     // show number of correct answers out of total
     resultsContainer.innerHTML = `${numCorrect} out of ${myQuestions.length}`;
-	*/
+	resultsContainer.style.visibility = 'visible';
+	const reslutsInPercent = (numCorrect * myQuestions.length) / 100 ;
+	console.log("reslutsInPercent",reslutsInPercent);
+	saveResultIntoStorage(reslutsInPercent);
+	updateResult();
+	
   }
 
   function showSlide(n) {
+	  console.log("slides",slides);
     slides[currentSlide].classList.remove('active-slide');
     slides[n].classList.add('active-slide');
     currentSlide = n;
@@ -257,9 +244,48 @@ function main(){
 	
   }
   
-  function saveResultIntoStorage() {
-    localStorage.setItem('resultInPercent', 20);
+  function restartQuiz(){ 
+  console.log("slides", slides);
+	slides.forEach(
+      (slide, slideNr) => {
+		slide.classList.remove('active-slide');
+	})
+	
+	slides = null;
+	numCorrect = 0;
+	currentSlide = 0;
+	myQuestions = null;
+	
+	answerContainers = null;
+	
+    submitButton.style.visibility = 'visible';
+    previousButton.style.visibility = 'visible';
+    nextButton.style.visibility = 'visible';
+    quizConfigurationContainer.style.display = 'block';
+	quizContainer.style.visibility = 'hidden';
+	
+	// Hide Buttons before Quiz starts
+	submitButton.style.visibility = 'hidden';
+    previousButton.style.visibility = 'hidden';
+    nextButton.style.visibility = 'hidden';
+    restartButton.style.visibility = 'hidden';
+	resultsContainer.style.visibility = 'hidden';
+	
+
+  
+  }
+  
+  function saveResultIntoStorage(result) {
+    localStorage.setItem('resultInPercent', result);
 	var resultInPercent = localStorage.getItem('resultInPercent');
+	console.log("resultInPercent", resultInPercent);
+  }
+  
+  function updateResult() {
+	var resultInPercent = localStorage.getItem('resultInPercent');
+	if(resultInPercent !== undefined || resultInPercent !== null){
+	  document.getElementById('score').innerHTML = "Your Score is: " + resultInPercent + "%";
+	}
   }
 
 }

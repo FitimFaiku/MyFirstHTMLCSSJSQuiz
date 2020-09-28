@@ -8,34 +8,45 @@
 		<title></title>
 	</head>
 <body onload="main()">
-	<h1>Quiz on Important Tech Facts</h1>
+	<h1>Quiz on Important Tech Facts.  <div id="score" /></div> </h1>
 	<div id="quiz-configuration">
 		<!-- category : (Linux,DevOps,Networking,Programming (PHP, JS, Python and etc.)),Cloud,Docker, Kubernetes) -->
-		<h2>Please choose the category of the quiz</h2>
-		<select id="quizCategory">
-		  <option value="Linux">Linux</option>
-		  <option value="DevOps">DevOps</option>
-		  <option value="Networking">Networking</option>
-		  <option value="Programming">Programming</option>
-		  <option value="PHP">PHP</option>
-		  <option value="Cloud">Cloud</option>
-		  <option value="Docker">Docker</option>
-		  <option value="Kubernetes">Kubernetes</option>
-		</select>
-
+		<h2>Please choose the category, difficulty, question limit of the quiz</h2>
+		<div>
+			<label>Category </label>
+			<select id="quizCategory">
+			  <option value="Linux">Linux</option>
+			  <option value="DevOps">DevOps</option>
+			  <!-- <option value="Networking">Networking</option> -->
+			  <option value="Code">Code</option>
+			  <option value="CMS">CMS</option>
+			  <option value="SQL">SQL</option>
+			  <option value="Docker">Docker</option>
+			  <!-- <option value="Kubernetes">Kubernetes</option> -->
+			</select>
+		</div>
+		
+		<div>
+		<!-- <h3>Difficulty</h3> -->
+		<label>Difficulty </label>
 		<select id="difficultyLevel">
-		  <option value="Hard">Hard</option>
-		  <option value="Medium">Medium</option>
 		  <option value="Easy">Easy</option>
+		  <option value="Medium">Medium</option>
+		  <option value="Hard">Hard</option> 
 		</select>
+		</div>
 		
-		<select id="questionLimit">
-		  <option value="10">10</option>
-		  <option value="20">20</option>
-		  <option value="30">30</option>
-		</select>
+		<div>
+			<!-- <h3>Amount of Questions</h3> -->
+			<label>Amount of Questions </label>
+			<select id="questionLimit">
+			  <option value="5">5</option>
+			  <option value="10">10</option>
+			  <option value="15">15</option>
+			</select>
+		</div>
 		
-		<button id="submit-configuration">Submit Quiz Configuration and start Quiz</button>
+		<div> <button id="submit-configuration">Submit Quiz Configuration and start Quiz</button> </div>
 	  </div>
 	<div class="quiz-container">
 	  <div id="quiz"></div>
@@ -44,6 +55,7 @@
 		<button id="previous">Previous Question</button>
 		<button id="next">Next Question</button>
 		<button id="submit">Submit Quiz</button>
+		<button id="restart">Restart Quiz</button>
 	</div>
 	<div id="results"></div>
 </body>
